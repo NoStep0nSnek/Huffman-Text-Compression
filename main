@@ -1,1 +1,130 @@
+#include <iostream>
+#include <vector>
+#include <string>
 
+using namespace std;
+
+int huffman_compression(vector<int> chars, vector<int> freqs) {
+
+    vector<int> sums;
+
+    vector<char> sorted_chars = chars;
+    vector<int> sorted_freqs = freqs;
+    
+    int lowest_freq;
+    int highest_freq;
+
+    // sorts frequencies
+    for (int i = 0; i < sorted_freqs.size(); i++) {
+
+        if (sorted_freqs[i] > highest_freq) {
+            highest_freq = sorted_freqs[i];
+        } else if (sorted_freqs[i] < lowest_freq) {
+            lowest_freq = sorted_freqs[i];
+        }
+
+        for (int j = 0; j < sorted_freqs.size(); i++) {
+            if (freqs[i] > sorted_freqs[j]) {
+                int temp = sorted_freqs[i];
+                sorted_freqs[i] = sorted_freqs[j];
+                sorted_freqs[j] = temp;
+                char temp = sorted_chars[i];
+                sorted_chars[i] = sorted_chars[j];
+                sorted_chars[j] = temp;
+            }
+        }
+    }
+
+    // prints sorted lists
+    cout << "\n\n";
+    for (auto z : freqs) {
+        print << z << ",";
+    }
+    cout << "\n\n";
+    for (auto z : sorted_chars) {
+        print << z << ",";
+    }
+
+    string code; // i.e. T01011
+
+    vector<int> sum_freqs;
+    vector<int> sum_chars;
+
+    for (int i = 0; i < sorted_freqs; i++) {
+        // calculates sum
+        int prt1 = sorted_freqs[i];
+        if (sorted_freqs.size() >= i + 1) {
+            int prt2 = sorted_freqs[i+1];
+        }
+
+        int sum = prt1 + prt2;
+
+        // inserts sum into sorted list
+        if (sum < sorted_freqs[0]) {
+            sorted_freqs.insert(0, sum);
+        }
+
+        if (sum < sorted_freqs[sorted_freqs.size() - 1]) {
+            sorted_freqs.insert(sorted_freqs.size() - 1, sum);
+        }
+
+        for (int i = 1; i < sorted_freqs - 1; i++) {
+            if (sum < sorted_freqs[i] && sum > sorted_freqs[i]) {
+                sorted_freqs.insert(i, sum);
+            }
+        }
+    }
+
+    cout << "\n\n";
+    for (auto z : sorted_freqs) {
+        print << z << ",";
+    }
+
+    
+    /*
+    if (sorted_freqs[j] < sorted_freqs[j+1]) {
+                code.push_back("1")
+            } else {
+                code.push_back("0")
+            }
+
+            int sum = sorted_freqs[i] + sorted_freqs[i+1];
+
+        }*/
+}
+
+vector<int> get_frequencies(string text, vector<char> &arr) {
+    vector<char> chars = {};
+    for (int i = 0; i < text.size(); i++) {
+        bool found = false;
+        for (int j = 0; j < chars.size(); j++) {
+            if (chars[i] == text[i]) {
+                found = true;
+                break;
+            }
+        }
+        if (found == false) {
+            chars.push_back(text[i]);
+        }
+    }
+
+    vector<int> frequencies(chars.size(),0);
+
+    for (int i = 0; i < text.size(); i++) {
+        for (int j = 0; j < chars.size(); j++) {
+            if (text[i] == chars[j]) {
+                frequencies[i]++;
+            }
+        }
+    }
+
+    arr = chars;
+    return frequencies;
+}
+
+int main () {
+    string str = "Wild Wild West";
+    vector<char> arr;
+    vector<int> freqs = get_frequencies(str, arr);
+    huffman_compression(arr, freqs)
+}
