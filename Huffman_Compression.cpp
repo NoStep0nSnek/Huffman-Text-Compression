@@ -32,13 +32,6 @@ struct node {
 
 };
 
-struct char_record {
-
-    int times_used;
-
-    char data;
-};
-
 // clamps an int between upper bound and lower bound
 int clamp (int num, int LB = -9999999, int UB = 9999999) {
     if (num < LB) {
@@ -57,7 +50,7 @@ vector<char> bits_to_bytes(string bits) {
 
     for (int i = 0; i < ceil(float(bits.size()) / 8); i++) {
         for (int j = 0; j < 8; j++) {
-            if (bits[j + (i * 8)] == '1') {
+            if ('1' == bits[j + (i * 8)]) {
                 bitset(byte, j);
             }
         }
@@ -85,23 +78,6 @@ string bytes_to_bits(vector<char> bytes) {
     return bits;
 }
 
-// void insert_sorted(vector<node> &tree, node* temp_node){
-//     vector<node> copy_tree;
-//     int highest = 0;
-//     for (auto z : tree) {
-//         if (temp_node->freq < z.freq) {
-//             highest = z.freq;
-//         }
-//     }
-//     for (auto z : tree) {
-//         if (z.freq == highest) {
-//             copy_tree.push_back(*temp_node);
-//         }
-//         copy_tree.push_back(z);
-//     }
-//     tree = copy_tree;
-// }
-
 // writes huffman bits to file
 // codes go first, seperated by a space and from the main text with a newline
 
@@ -113,7 +89,6 @@ string decompress_huffman(string filename) {
     cout << "\nOPEN:" << in_file.is_open();
     string text;
     vector<string> codes; // code[0] == letter, code[1] == frequency
-    vector<int> freqs;
     vector<char> chars;
     // gets huffman codes from text
     int max_iterations = 1000;
@@ -139,7 +114,7 @@ string decompress_huffman(string filename) {
         string end;
         in_file.read(&temp_char, 1);
         //in_file.read(&end[0], 4);
-        if (temp_char == '\n') {
+        if ('\n' == temp_char) {
             break;
         }
         if (temp_char == ' ' && matches_a_row == 0) {
@@ -154,28 +129,18 @@ string decompress_huffman(string filename) {
         }
     }
 
-    cout << "\n\nREAD CODES: ";
-    // prints read codes
-    for (auto z : codes) {
-        cout << "(";
-        for (int i = 0; i < z.size(); i++) {
-            if (i == 0) {
-                cout << "D:" << char(z[i]) << ",";
-            } else {
-                cout << int(z[i]-48) << ",";
-            }
-        }
-        cout << ") ";
-    }
-
-
-    // gets frequencies & chars from codes & stores them
+    // cout << "\n\nREAD CODES: ";
+    // // prints read codes
     // for (auto z : codes) {
-    //     chars.push_back(z[0]);
-    //     freqs.push_back(z[1]);
-    //     char_record record;
-    //     record.data = z[0];
-    //     record.times_used = 0;
+    //     cout << "(";
+    //     for (int i = 0; i < z.size(); i++) {
+    //         if (i == 0) {
+    //             cout << "D:" << char(z[i]) << ",";
+    //         } else {
+    //             cout << int(z[i]-48) << ",";
+    //         }
+    //     }
+    //     cout << ") ";
     // }
 
     string text_buffer;
@@ -187,10 +152,6 @@ string decompress_huffman(string filename) {
         len++;
     }
     
-    cout << "\nTEXT BUFFER: ";
-    for (auto z : text_buffer) {
-        cout << z << ",";
-    }
     text_buffer.pop_back();
     vector<char> v;
     for (int i = 0; i < len-1; i++) {
@@ -198,8 +159,6 @@ string decompress_huffman(string filename) {
     }
 
     string bits = bytes_to_bits(v); // converts read bytes into bits
-
-    cout << "\nBITS: " << bits << "\n";
 
     // records frequency of used chars
     // index is the index of the char in code
@@ -254,7 +213,6 @@ void write_huffman(vector<string> codes, string text, string filename, string en
 
     // writes size of text
     out_file << to_string(text.length());
-    cout << "LEN:" << to_string(text.length());
     out_file << '\n';
 
     cout << "\n\n";
@@ -391,16 +349,6 @@ void huffman_compression(string text, vector<char> chars, vector<int> freqs, str
         }
     }
 
-    cout << "\nSORTED FREQS: ";
-    for (auto z : sorted_freqs) {
-        cout << z << ",";
-    }
-
-    cout << "\nSORTED CHARS: ";
-    for (auto z : sorted_chars) {
-        cout << z << ",";
-    }
-
     vector<node> heap_tree(sorted_freqs.size());
 
     // init heap tree
@@ -445,20 +393,9 @@ void huffman_compression(string text, vector<char> chars, vector<int> freqs, str
         sum_node->right = node_right;
         insert_sorted(heap_tree_copy, sum_node);
         insert_sorted(heap_tree, sum_node);
-        //insert(heap_tree, i, *sum_node);
-        cout << "\nLEFT: " << sum_node->left->data << "," << sum_node->left->freq;
-        cout << "\nRIGHT: " << sum_node->right->data << "," << sum_node->right->freq;
-        cout << "\nSUM: " << sum_node->data << "," << int(sum_node->freq);
-        //cout << "\nI: " << i;
-        cout << "\n";
-        for (auto z : heap_tree_copy) {
-            cout << z.freq << "F,";
-            //cout << z.data << "D,";
-        }
-        cout << "\n";
-        for (auto z : heap_tree_copy) {
-            cout << z.data << "D,";
-        }
+        // cout << "\nLEFT: " << sum_node->left->data << "," << sum_node->left->freq;
+        // cout << "\nRIGHT: " << sum_node->right->data << "," << sum_node->right->freq;
+        // cout << "\nSUM: " << sum_node->data << "," << int(sum_node->freq);
 
         merge--;
         if (heap_tree_copy.size() == 0) {
@@ -467,24 +404,7 @@ void huffman_compression(string text, vector<char> chars, vector<int> freqs, str
     }
 
     codes = get_codes(heap_tree, sorted_chars, sorted_freqs);
-    cout << "\n#Codes: " << codes.size();
-    cout << "\nCodes: ";
-
-    for (auto z : codes) {
-        cout << "(";
-        for (int i = 0; i < z.size(); i++) {
-            if (i == 0) {
-                cout << "D:";
-                cout << char(z[i]) << ',';
-            } else if (i == 1) {
-                cout << "F:" << int(z[i]) << ", C:";
-            } else {
-                cout << int(z[i]-48) << ',';
-            }
-        }
-        cout << ") ";
-    }
-
+    
     write_huffman(codes, text, filename, endFolder);
 }
 
@@ -512,14 +432,6 @@ vector<int> get_frequencies(string text, vector<char> &arr) {
         }
     }
 
-    // cout << "UNSORTED FREQS:";
-    // for (auto z : frequencies) {
-    //     cout << z << ",";
-    // }
-    // cout << "\nUNSORTED CHARS:";
-    // for (auto z : chars) {
-    //     cout << z << ",";
-    // }
     arr = chars;
     return frequencies;
 }
@@ -528,24 +440,15 @@ int main () {
  
     vector<int> freqs;
     vector<char> arr;
-    //vector<int> freqs = {5, 9, 12, 13, 16, 45};
-    //vector<int> freqs = get_frequencies("abcdef", arr);
-    // cout << "\n\n CHARS: ";
-    // for (auto z : arr) {
-    //     cout << z << ",";
-    // }
-    // cout << "\n FREQS: ";
-    // for (auto z : freqs) {
-    //     cout << z << ",";
-    // }
+
     RESTART_INPUT:
     cout << "Do you want compress or decompress a text file [C/D]:\n";
     string str_c_or_d;
     bool wants_compress;
     cin >> str_c_or_d;
-    if (tolower(str_c_or_d[0]) == 'c') {
+    if ('c' == tolower(str_c_or_d[0])) {
         wants_compress = true;
-    } else if(tolower(str_c_or_d[0]) == 'd') {
+    } else if ('d' == tolower(str_c_or_d[0])) {
         wants_compress = false;
     } else {
         goto RESTART_INPUT;
@@ -576,7 +479,7 @@ int main () {
         huffman_compression(text, arr, freqs, filename, "Compressed_Documents/");
 
     } else {
-        cout << "Enter the name of the file that you would like to decompress. A decompressed copy of it will be created.\nFilename (must be .huff): ";
+        cout << "Enter the name of the file that you would like to decompress. A decompressed copy of it will be created.\nFilename (must be .txt): ";
         string filename;
         cin >> filename;
         string decompressed_text = decompress_huffman("Compressed_Documents/" + filename);
