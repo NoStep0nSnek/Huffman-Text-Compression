@@ -16,10 +16,6 @@
 
 using namespace std;
 
-/*class compressed_txt_file() {
-
-)*/
-
 struct node {
     
     char data;
